@@ -7,9 +7,20 @@ using UnityEngine.AI;
 public class Rogue : MonoBehaviour
 {
 
-    private BTBaseNode tree;
+    [SerializeField] private float maxDistanceToPlayer;
+    [SerializeField] private float preferredDistanceToPlayer;
+    [SerializeField] private float throwingRange;
+    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject guard;
+
+    private Blackboard blackboard;
+    private BTNode rogueBehaviour;
+    private BTNode idleBehaviour;
+    private BTNode followBehaviour;
+    private BTNode supportBehaviour;
     private NavMeshAgent agent;
     private Animator animator;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -18,24 +29,43 @@ public class Rogue : MonoBehaviour
 
     private void Start()
     {
-        //TODO: Create your Behaviour tree here
+        blackboard = new Blackboard();
+        blackboard.SetValue<Transform>("target", player.transform);
+
+        idleBehaviour = new BTSequence(new BTConditionalCheckDistanceTo(this.gameObject, player, maxDistanceToPlayer, 
+            BTConditionalCheckDistanceTo.CheckType.LESS_OR_EQUAL), new BTPlayAnimation(animator, "Crouch Idle"));
+
+        followBehaviour = new BTSequence(
+            new BTConditionalCheckDistanceTo(this.gameObject, player, maxDistanceToPlayer, BTConditionalCheckDistanceTo.CheckType.GREATER_THAN),
+            new BTPlayAnimation(animator, "Walk Crouch"), 
+            new BTMoveTowards(blackboard, agent, preferredDistanceToPlayer, true));
+        //new BTSeek(agent, player, 5, maxDistanceToPlayer));
+
+        supportBehaviour = new BTSequence(new BTGetClosestInLayer(blackboard, transform.position,
+            throwingRange - 1, "obstacle", LayerMask.NameToLayer("Obstacles")),
+            new BTGetOppositeDirection(blackboard, blackboard.GetValue<GameObject>("obstacle").transform.position, guard.transform.position, "hidingspot"),
+            new BTMoveToPosition(blackboard, agent, 0.1f, "hidingspot"));
+
+        rogueBehaviour = new BTSequence(followBehaviour, idleBehaviour);
     }
 
     private void FixedUpdate()
     {
-        tree?.Run();
+        rogueBehaviour?.Run();
     }
 
-    //private void OnDrawGizmos()
-    //{
+    private void OnDrawGizmos()
+    {
     //    Gizmos.color = Color.yellow;
-    //    Handles.color = Color.yellow;
+        Handles.color = Color.yellow;
     //    Vector3 endPointLeft = viewTransform.position + (Quaternion.Euler(0, -ViewAngleInDegrees.Value, 0) * viewTransform.transform.forward).normalized * SightRange.Value;
     //    Vector3 endPointRight = viewTransform.position + (Quaternion.Euler(0, ViewAngleInDegrees.Value, 0) * viewTransform.transform.forward).normalized * SightRange.Value;
-
+        Handles.DrawWireArc(transform.position, Vector3.up, transform.position, 360, maxDistanceToPlayer);
+        Handles.color = Color.blue;
+        Handles.DrawWireArc(transform.position, Vector3.up, transform.position, 360, preferredDistanceToPlayer);
     //    Handles.DrawWireArc(viewTransform.position, Vector3.up, Quaternion.Euler(0, -ViewAngleInDegrees.Value, 0) * viewTransform.transform.forward, ViewAngleInDegrees.Value * 2, SightRange.Value);
     //    Gizmos.DrawLine(viewTransform.position, endPointLeft);
     //    Gizmos.DrawLine(viewTransform.position, endPointRight);
 
-    //}
+    }
 }
