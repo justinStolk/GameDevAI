@@ -50,7 +50,6 @@ public class BTMoveTowards : BTNode
         if (Vector3.Distance(agent.transform.position, target.position) <= agent.stoppingDistance + keepDistance|| !persistentTarget && Vector3.Distance(agent.transform.position, agent.destination) <= agent.stoppingDistance + keepDistance )
         {
             agent.isStopped = true;
-            Debug.Log("Found target and at position!");
             return BTResult.Success;
         }
         return BTResult.Running;

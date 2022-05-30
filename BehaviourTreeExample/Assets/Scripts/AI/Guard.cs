@@ -13,6 +13,7 @@ public class Guard : MonoBehaviour
     private NavMeshAgent agent;
     private Animator animator;
     private GameObject weapon;
+
     [SerializeField] private Transform player;
     [SerializeField] private Transform viewPoint;
     [SerializeField] private FieldOfView fieldOfView;
@@ -20,6 +21,7 @@ public class Guard : MonoBehaviour
     [SerializeField] private float awarenessRadius = 2;
     [SerializeField] private float attackRange = 1;
     [SerializeField] private float patrolWaitTime;
+
     private Vector3 lastPosition;
 
 
@@ -40,13 +42,15 @@ public class Guard : MonoBehaviour
             new BTPlayAnimation(animator, "Rifle Walk"),
             //  new BTSelector(true, new BTSequence(
             // new BTHasObject(Bb, "weapon"), 
-            new BTMoveTowards(Bb, agent, attackRange, false),
+            new BTMoveTowards(Bb, agent, attackRange, true),
             new BTPlayAnimation(animator, "Kick"),
             new BTAttack(this.gameObject, 10, player.GetComponent<IDamageable>()),
-            new BTWait(3)
+            new BTWait(1),
+            new BTPlayAnimation(animator, "Idle")
             // ), new BTSequence()
-            ,
-        new BTDebug("Executed attack behaviour successfully")) ;
+            //,
+        //new BTDebug("Executed attack behaviour successfully")
+        );
         patrolBehaviour = new BTSequence(
                   new BTInverter(new BTCanSeeTarget(viewPoint, player, fieldOfView.viewAngle, fieldOfView.viewRadius, awarenessRadius)),
                     new BTSetWaypoint(Bb, waypointSystem, "waypointSystem"),

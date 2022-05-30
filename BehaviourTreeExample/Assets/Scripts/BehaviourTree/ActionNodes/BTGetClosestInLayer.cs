@@ -22,6 +22,7 @@ public class BTGetClosestInLayer : BTNode
         Collider[] results = Physics.OverlapSphere(from, checkDistance, layerMask);
         if (results.Length == 0)
         {
+            Debug.Log("Couldn't find any obstacle to hide behind!");
             return BTResult.Failed;
         } 
         float dist = float.MaxValue;
@@ -34,7 +35,7 @@ public class BTGetClosestInLayer : BTNode
                 closest = c.gameObject;
             }
         }
-        blackboard.SetValue<GameObject>(savedAs, closest);
+        blackboard.SetValue(savedAs, closest.transform.position);
         return BTResult.Success;
     }
 }
