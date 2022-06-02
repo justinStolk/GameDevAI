@@ -10,9 +10,12 @@ public class Rogue : MonoBehaviour
     [SerializeField] private float maxDistanceToPlayer;
     [SerializeField] private float preferredDistanceToPlayer;
     [SerializeField] private float throwingRange;
+    [SerializeField] private float throwingForce;
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject guard;
-    [SerializeField] private LayerMask hidingObjectLayer;
+    //[SerializeField] private LayerMask hidingObjectLayer;
+    [SerializeField] private Rigidbody smokeBomb;
+    [SerializeField] private Transform throwingPoint;
 
     private Blackboard blackboard;
     private BTNode rogueBehaviour;
@@ -31,8 +34,10 @@ public class Rogue : MonoBehaviour
     private void Start()
     {
         blackboard = new Blackboard();
-        blackboard.SetValue<Transform>("target", player.transform);
+        blackboard.SetValue<Transform>("player", player.transform);
         blackboard.SetValue<Transform>("guard", guard.transform);
+        blackboard.SetValue<Transform>("throwpoint", throwingPoint.transform);
+        //blackboard.SetValue<GameObject[]>("hidingspots", GameObject.FindGameObjectsWithTag("HidingSpot"));
 
         idleBehaviour = new BTSequence(new BTConditionalCheckDistanceTo(this.gameObject, player, maxDistanceToPlayer, 
             BTConditionalCheckDistanceTo.CheckType.LESS_OR_EQUAL), new BTPlayAnimation(animator, "Crouch Idle"));
@@ -40,17 +45,17 @@ public class Rogue : MonoBehaviour
         followBehaviour = new BTSequence(
             new BTConditionalCheckDistanceTo(this.gameObject, player, maxDistanceToPlayer, BTConditionalCheckDistanceTo.CheckType.GREATER_THAN),
             new BTPlayAnimation(animator, "Walk Crouch"), 
-            new BTMoveTowards(blackboard, agent, preferredDistanceToPlayer, true));
+            new BTMoveTowards(blackboard, agent, "player", preferredDistanceToPlayer, true));
         //new BTSeek(agent, player, 5, maxDistanceToPlayer));
         
         supportBehaviour = new BTSequence(new BTEvaluateBool("SeePlayer"),
-            new BTGetClosestInLayer(blackboard, transform.position,
-            throwingRange - 1, "obstacle", hidingObjectLayer),
-            new BTDebug($"I got the closest in the layer! Which is: {blackboard.GetValue<Vector3>("obstacle")}"),
-            new BTGetOppositeDirection(blackboard, "guard","obstacle", "hidingspot"),
-            new BTDebug("I got the opposite direction!"),
-            new BTMoveToPosition(blackboard, agent, 0.5f, "hidingspot"), 
-            new BTDebug("I am now at the hiding spot"));
+            new BTFindTaggedObjects(blackboard, "HidingSpot","hidingspots"),
+            new BTFindClosest(blackboard, this.transform, "hidingspots", "hidingspot"),
+            new BTPlayAnimation(animator, "Walk Crouch"),
+            new BTMoveTowards(blackboard, agent, "hidingspot", 0.5f, false), 
+            new BTPlayAnimation(animator, "Crouch Idle"),
+            new BTThrowObject(blackboard ,smokeBomb, "throwpoint", "guard", throwingForce, 5)
+            );
 
         rogueBehaviour = new BTSelector(true, supportBehaviour, new BTSequence(followBehaviour, idleBehaviour));
         //rogueBehaviour = new BTSequence(followBehaviour, idleBehaviour);

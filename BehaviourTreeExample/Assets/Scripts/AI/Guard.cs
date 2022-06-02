@@ -28,7 +28,8 @@ public class Guard : MonoBehaviour
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        animator = GetComponentInChildren<Animator>();
+        animator = GetComponentInChildren<Animator>(); 
+        SharedBlackboard.SetValue("SeePlayer", false);
     }
 
     private void Start()
@@ -42,7 +43,7 @@ public class Guard : MonoBehaviour
             new BTPlayAnimation(animator, "Rifle Walk"),
             //  new BTSelector(true, new BTSequence(
             // new BTHasObject(Bb, "weapon"), 
-            new BTMoveTowards(Bb, agent, attackRange, true),
+            new BTMoveTowards(Bb, agent, "target", attackRange, true),
             new BTPlayAnimation(animator, "Kick"),
             new BTAttack(this.gameObject, 10, player.GetComponent<IDamageable>()),
             new BTWait(1),
@@ -55,7 +56,7 @@ public class Guard : MonoBehaviour
                   new BTInverter(new BTCanSeeTarget(viewPoint, player, fieldOfView.viewAngle, fieldOfView.viewRadius, awarenessRadius)),
                     new BTSetWaypoint(Bb, waypointSystem, "waypointSystem"),
                     new BTPlayAnimation(animator, "Rifle Walk"),
-                            new BTMoveTowards(Bb, agent, 0, false),
+                            new BTMoveTowards(Bb, agent, "target", 0, false),
                             new BTPlayAnimation(animator, "Idle"),
                                      new BTWait(patrolWaitTime)
                                         );            

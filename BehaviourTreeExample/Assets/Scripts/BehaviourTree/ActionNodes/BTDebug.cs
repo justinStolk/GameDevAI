@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BTDebug : BTNode
 {
-    private string message;
-    public BTDebug(string _message)
+    private object message;
+    public BTDebug(object _message)
     {
         message = _message;
     }

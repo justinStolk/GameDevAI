@@ -9,21 +9,23 @@ public class BTMoveTowards : BTNode
     private NavMeshAgent agent;
     private Blackboard blackboard;
     private float keepDistance;
-    bool persistentTarget;
-    public BTMoveTowards(Blackboard _blackboard, NavMeshAgent _agent, float _keepDistance, bool _persistentTarget)
+    private bool persistentTarget;
+    private string targetsName;
+    public BTMoveTowards(Blackboard _blackboard, NavMeshAgent _agent, string targetName, float _keepDistance, bool _persistentTarget)
     {
         blackboard = _blackboard;
         agent = _agent;
         keepDistance = _keepDistance;
-        target = blackboard.GetValue<Transform>("target");
+        targetsName = targetName;
+        //target = blackboard.GetValue<Transform>(targetName);
         persistentTarget = _persistentTarget;
-        agent.SetDestination(target.position);
+        //agent.SetDestination(target.position);
     }
     public override void OnEnter()
     {
         agent.ResetPath();
         agent.isStopped = false;
-        target = blackboard.GetValue<Transform>("target");
+        target = blackboard.GetValue<Transform>(targetsName);
         if (!agent.pathPending && !agent.hasPath)
         {
                 agent.SetDestination(target.position);
@@ -36,11 +38,11 @@ public class BTMoveTowards : BTNode
     }
     public override BTResult Run()
     {
-        Transform storedTarget = blackboard.GetValue<Transform>("target");
+        Transform storedTarget = blackboard.GetValue<Transform>(targetsName);
         if (persistentTarget && target.position != agent.destination)
         {
             agent.SetDestination(target.position);
-            blackboard.SetValue<Transform>("target", target);
+            blackboard.SetValue<Transform>(targetsName, target);
         }
         if(agent.pathStatus == NavMeshPathStatus.PathInvalid)
         {
