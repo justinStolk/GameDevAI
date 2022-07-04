@@ -14,7 +14,13 @@ public class BTParallel : BTNode
     }
     public override BTResult Run()
     {
-        
+        foreach (BTNode child in children)
+        {
+            if (!child.initialised)
+            {
+                child.OnEnter();
+            }
+        }
         switch (policy)
         {
             case ParallelPolicy.ON_CHILD_FAIL:
@@ -28,11 +34,43 @@ public class BTParallel : BTNode
                 }
                 break;
             case ParallelPolicy.ON_ALL_CHILDREN_FAIL:
-                break;
+                foreach (BTNode n in children)
+                {
+                    BTResult childResult = n.Run();
+                    if (childResult == BTResult.Success)
+                    {
+                        return BTResult.Failed;
+                    }
+                    if (childResult == BTResult.Running)
+                    {
+                        return BTResult.Running;
+                    }
+                }
+                return BTResult.Success;
             case ParallelPolicy.ON_CHILD_SUCCESS:
+                foreach (BTNode n in children)
+                {
+                    BTResult childResult = n.Run();
+                    if (childResult == BTResult.Success)
+                    {
+                        return BTResult.Success;
+                    }
+                }
                 break;
             case ParallelPolicy.ON_ALL_CHILDREN_SUCCESS:
-                break;
+                foreach (BTNode n in children)
+                {
+                    BTResult childResult = n.Run();
+                    if (childResult == BTResult.Failed)
+                    {
+                        return BTResult.Failed;
+                    }
+                    if (childResult == BTResult.Running)
+                    {
+                        return BTResult.Running;
+                    }
+                }
+                return BTResult.Success;
         }
         return BTResult.Running;
 

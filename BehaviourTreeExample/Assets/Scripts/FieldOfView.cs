@@ -60,19 +60,19 @@ public class FieldOfView : MonoBehaviour
         return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
     }
 
-    private void OnDrawGizmos()
-    {
-        Handles.color = Color.black;
-        Vector3 viewAngleA = DirectionFromAngle(-viewAngle / 2, false);
-        Vector3 viewAngleB = DirectionFromAngle(viewAngle / 2, false);
-        Handles.DrawWireArc(transform.position, Vector3.up, viewAngleA, viewAngle, viewRadius, 2);
-        Handles.DrawLine(transform.position, transform.position + viewAngleA * viewRadius, 2);
-        Handles.DrawLine(transform.position, transform.position + viewAngleB * viewRadius, 2);
+    //private void OnDrawGizmos()
+    //{
+    //    Handles.color = Color.black;
+    //    Vector3 viewAngleA = DirectionFromAngle(-viewAngle / 2, false);
+    //    Vector3 viewAngleB = DirectionFromAngle(viewAngle / 2, false);
+    //    Handles.DrawWireArc(transform.position, Vector3.up, viewAngleA, viewAngle, viewRadius, 2);
+    //    Handles.DrawLine(transform.position, transform.position + viewAngleA * viewRadius, 2);
+    //    Handles.DrawLine(transform.position, transform.position + viewAngleB * viewRadius, 2);
 
-        Handles.color = Color.red;
-        foreach (Transform t in visibleTargets)
-        {
-            Handles.DrawLine(transform.position, t.position);
-        }
-    }
+    //    Handles.color = Color.red;
+    //    foreach (Transform t in visibleTargets)
+    //    {
+    //        Handles.DrawLine(transform.position, t.position);
+    //    }
+    //}
 }

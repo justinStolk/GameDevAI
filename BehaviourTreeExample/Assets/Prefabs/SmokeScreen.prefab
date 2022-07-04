@@ -4822,6 +4822,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7580003718910966498}
   - component: {fileID: 5576137956201001280}
+  - component: {fileID: -419596793660523925}
   m_Layer: 6
   m_Name: SmokeScreen
   m_TagString: Untagged
@@ -4853,8 +4854,20 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6952740362816136114}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 3
+  m_Radius: 1.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-419596793660523925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6952740362816136114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d72d7b67cc75d9f4bb9ba3c7f8f183ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

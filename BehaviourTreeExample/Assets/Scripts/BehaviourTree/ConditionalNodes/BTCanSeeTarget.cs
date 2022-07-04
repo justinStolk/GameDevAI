@@ -18,24 +18,32 @@ public class BTCanSeeTarget : BTNode
         viewRadius = _viewRadius;
         awarenessRadius = _awarenessRadius;
     }
-    
+
     public override BTResult Run()
     {
         //visibleTargets.Clear();
         Vector3 directionToTarget = (target.position - viewPoint.position).normalized;
-        if(Vector3.Angle(viewPoint.forward, directionToTarget) < viewAngle / 2 /*|| Vector3.Distance(viewPoint.position, target.position) <= awarenessRadius*/)
+        if (Physics.Raycast(viewPoint.position, directionToTarget, out RaycastHit hit, viewRadius))
         {
-            if(Physics.Raycast(viewPoint.position, directionToTarget, out RaycastHit hit, viewRadius))
+            bool targetInView = hit.transform.CompareTag("Player");
+            if (Vector3.Angle(viewPoint.forward, directionToTarget) < viewAngle / 2 && targetInView || Vector3.Distance(viewPoint.position, target.position) < awarenessRadius && targetInView)
             {
-                bool targetInView = hit.transform.CompareTag("Player");
-                SharedBlackboard.SetValue<bool>("SeePlayer", true);
-                if (Vector3.Distance(viewPoint.position, target.position) < awarenessRadius || targetInView)
-                {
-                    return BTResult.Success;
-                }
+                return BTResult.Success;
             }
         }
-        SharedBlackboard.SetValue<bool>("SeePlayer", false);
+        //if(Vector3.Angle(viewPoint.forward, directionToTarget) < viewAngle / 2 /*|| Vector3.Distance(viewPoint.position, target.position) <= awarenessRadius*/)
+        //{
+        //    if(Physics.Raycast(viewPoint.position, directionToTarget, out RaycastHit hit, viewRadius))
+        //    {
+        //        bool targetInView = hit.transform.CompareTag("Player");
+        //        //SharedBlackboard.SetValue<bool>("SeePlayer", true);
+        //        if (Vector3.Distance(viewPoint.position, target.position) < awarenessRadius|| targetInView)
+        //        {
+        //            return BTResult.Success;
+        //        }
+        //    }
+        //}
+        //SharedBlackboard.SetValue<bool>("SeePlayer", false);
         return BTResult.Failed;
         /*
         Collider[] targetsInViewRadius = Physics.OverlapSphere(viewPoint.position, viewRadius, targetMask);

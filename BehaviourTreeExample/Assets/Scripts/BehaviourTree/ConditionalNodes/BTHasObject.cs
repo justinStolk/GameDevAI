@@ -9,6 +9,7 @@ public class BTHasObject : BTNode
     public BTHasObject(Blackboard _blackboard, string _objectName)
     {
         blackboard = _blackboard;
+        objectName = _objectName;
     }
 
     public override BTResult Run()

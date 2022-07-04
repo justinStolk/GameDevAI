@@ -38,6 +38,7 @@ public class BTMoveTowards : BTNode
     }
     public override BTResult Run()
     {
+        agent.isStopped = false;
         Transform storedTarget = blackboard.GetValue<Transform>(targetsName);
         if (persistentTarget && target.position != agent.destination)
         {

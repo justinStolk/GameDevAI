@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BTEvaluateBool : BTNode
+public class BTEvaluateSharedBool : BTNode
 {
     string evaluator;
-    public BTEvaluateBool(string boolToEvaluate)
+    public BTEvaluateSharedBool(string boolToEvaluate)
     {
         evaluator = boolToEvaluate;
     }
